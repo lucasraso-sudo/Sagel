@@ -1,65 +1,121 @@
-import Image from "next/image";
+import Link from "next/link";
+import { SearchBar } from "@/app/components/SearchBar";
 
-export default function Home() {
+const EXAMPLE_QUERIES = [
+  "ventilateur silencieux pour chambre",
+  "climatiseur mobile pas cher",
+  "rafraîchisseur d'air puissant pour salon",
+  "meilleur ventilateur de table",
+];
+
+const CATEGORIES = [
+  {
+    slug: "ventilateurs",
+    label: "Ventilateurs",
+    emoji: "🌀",
+    desc: "Brasseurs d'air, colonnes, tours et ventilateurs de table",
+  },
+  {
+    slug: "rafraichisseurs-air",
+    label: "Rafraîchisseurs d'air",
+    emoji: "💧",
+    desc: "Rafraîchisseurs évaporatifs, brumisateurs, 3-en-1",
+  },
+  {
+    slug: "climatiseurs-mobiles",
+    label: "Climatiseurs mobiles",
+    emoji: "❄️",
+    desc: "Climatiseurs monobloc et split mobile, connectés",
+  },
+];
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div>
+      {/* Hero */}
+      <section className="bg-gradient-to-b from-blue-50 to-gray-50 pt-16 pb-20 px-4">
+        <div className="max-w-3xl mx-auto text-center space-y-6">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
+            Trouvez le meilleur produit <br />
+            <span className="text-blue-600">en quelques secondes</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-lg text-gray-500 max-w-xl mx-auto">
+            Scores transparents, données réelles. Sans affiliation, sans biais.
           </p>
+          <SearchBar large />
+
+          <div className="flex flex-wrap gap-2 justify-center pt-2">
+            {EXAMPLE_QUERIES.map((q) => (
+              <Link
+                key={q}
+                href={`/search?q=${encodeURIComponent(q)}`}
+                className="text-sm bg-white border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 px-3 py-1.5 rounded-full transition-colors shadow-sm"
+              >
+                {q}
+              </Link>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Score explainer */}
+      <section className="max-w-4xl mx-auto px-4 py-14">
+        <h2 className="text-xl font-bold text-gray-800 mb-8 text-center">
+          Comment fonctionne le score ?
+        </h2>
+        <div className="grid sm:grid-cols-3 gap-6">
+          {[
+            {
+              icon: "⭐",
+              label: "Avis utilisateurs",
+              pct: "55%",
+              desc: "Agrégation des avis plateformes (Darty, Fnac, Amazon…) pondérés par volume et fiabilité.",
+            },
+            {
+              icon: "🔬",
+              label: "Score expert",
+              pct: "20%",
+              desc: "Tests indépendants UFC Que Choisir, Which?, Consumer Reports.",
+            },
+            {
+              icon: "⚙️",
+              label: "Score technique",
+              pct: "25%",
+              desc: "Analyse des specs clés : bruit, débit d'air, consommation selon la catégorie.",
+            },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="bg-white rounded-2xl border border-gray-100 p-5 text-center shadow-sm"
+            >
+              <div className="text-3xl mb-3">{item.icon}</div>
+              <div className="font-bold text-2xl text-blue-600 mb-1">{item.pct}</div>
+              <div className="font-semibold text-gray-800 mb-2">{item.label}</div>
+              <p className="text-sm text-gray-500">{item.desc}</p>
+            </div>
+          ))}
         </div>
-      </main>
+      </section>
+
+      {/* Categories */}
+      <section className="max-w-4xl mx-auto px-4 pb-16">
+        <h2 className="text-xl font-bold text-gray-800 mb-6">Catégories</h2>
+        <div className="grid sm:grid-cols-3 gap-4">
+          {CATEGORIES.map((cat) => (
+            <Link
+              key={cat.slug}
+              href={`/category/${cat.slug}`}
+              className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:border-blue-100 transition-all group"
+            >
+              <div className="text-3xl mb-3">{cat.emoji}</div>
+              <h3 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
+                {cat.label}
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">{cat.desc}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
