@@ -10,7 +10,7 @@ interface ParsedIntent {
   priceRange: "low" | "mid" | "high" | null;
 }
 
-const CATEGORY_KEYWORDS: Record<Category, string[]> = {
+export const CATEGORY_KEYWORDS: Record<Category, string[]> = {
   FAN: [
     "ventilateur",
     "fan",
