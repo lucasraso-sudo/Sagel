@@ -20,14 +20,16 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  const hits = searchProducts(query, products);
+  const { hits, intents } = searchProducts(query, products);
 
   return Response.json({
     query,
-    results: hits.map(({ product, relevance, matchedFields }) => ({
+    intents,
+    results: hits.map(({ product, relevance, matchedFields, intentScore }) => ({
       product,
       relevance,
       matchedFields,
+      intentScore,
     })),
   });
 }

@@ -10,18 +10,33 @@ interface SearchHit {
   product: Product;
   relevance: number;
   matchedFields: string[];
+  intentScore: number;
+}
+
+interface AppliedIntent {
+  id: string;
+  label: string;
+  arrow: string;
 }
 
 // "idle" (no query) is derived from the URL at render time, so the effect never
 // needs a synchronous reset — it only toggles loading/done while fetching.
-type State = { status: "loading" | "done"; hits: SearchHit[] };
+type State = {
+  status: "loading" | "done";
+  hits: SearchHit[];
+  intents: AppliedIntent[];
+};
 
 function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") ?? "";
   const hasQuery = query.trim().length > 0;
 
-  const [state, setState] = useState<State>({ status: "loading", hits: [] });
+  const [state, setState] = useState<State>({
+    status: "loading",
+    hits: [],
+    intents: [],
+  });
 
   useEffect(() => {
     if (!hasQuery) return;
@@ -29,15 +44,20 @@ function SearchResults() {
     let ignore = false;
     // Intentional loading flash before the async fetch resolves.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setState({ status: "loading", hits: [] });
+    setState({ status: "loading", hits: [], intents: [] });
 
     fetch(`/api/search?q=${encodeURIComponent(query)}`)
       .then((r) => r.json())
       .then((data) => {
-        if (!ignore) setState({ status: "done", hits: data.results ?? [] });
+        if (!ignore)
+          setState({
+            status: "done",
+            hits: data.results ?? [],
+            intents: data.intents ?? [],
+          });
       })
       .catch(() => {
-        if (!ignore) setState({ status: "done", hits: [] });
+        if (!ignore) setState({ status: "done", hits: [], intents: [] });
       });
 
     return () => {
@@ -46,17 +66,34 @@ function SearchResults() {
   }, [query, hasQuery]);
 
   const status: "idle" | "loading" | "done" = !hasQuery ? "idle" : state.status;
-  const { hits } = state;
+  const { hits, intents } = state;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
       <div className="space-y-3">
         <SearchBar initialQuery={query} large />
         {query && status === "done" && (
-          <p className="text-sm text-muted">
-            {hits.length} résultat{hits.length > 1 ? "s" : ""} pour{" "}
-            <span className="font-semibold text-ink">&ldquo;{query}&rdquo;</span>
-          </p>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
+            <span>
+              {hits.length} résultat{hits.length > 1 ? "s" : ""} pour{" "}
+              <span className="font-semibold text-ink">
+                &ldquo;{query}&rdquo;
+              </span>
+            </span>
+            {intents.length > 0 && (
+              <span className="flex flex-wrap items-center gap-1.5">
+                <span className="text-muted">· trié par</span>
+                {intents.map((it) => (
+                  <span
+                    key={it.id}
+                    className="inline-flex items-center gap-0.5 bg-brand/8 text-brand px-2 py-0.5 rounded-full text-[0.72rem] font-medium"
+                  >
+                    {it.label} {it.arrow}
+                  </span>
+                ))}
+              </span>
+            )}
+          </div>
         )}
       </div>
 

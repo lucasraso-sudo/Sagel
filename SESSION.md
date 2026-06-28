@@ -9,11 +9,17 @@
 - **Système de recherche** (cœur) : vraie recherche texte classée par pertinence
   (nom / marque / modèle / MPN / catégorie), insensible aux accents, seuil
   d'inclusion (vrai « aucun résultat »).
-  - `lib/search/search.ts` (ranker pur), `app/api/search/route.ts` (`GET /api/search?q=`),
-    `app/search/page.tsx` (grille de résultats réécrite).
+  - `lib/search/search.ts` (ranker), `lib/search/normalize.ts`, `app/api/search/route.ts`
+    (`GET /api/search?q=`), `app/search/page.tsx` (grille de résultats).
   - `lib/recommendation/recommend.ts` : `export` de `CATEGORY_KEYWORDS` (sans changement de logique).
-  - Scoring et scraping **non touchés** ; `/api/recommend` préservé.
-  - Testé en réel (PGlite + dev) : `/api/search` + endpoints impactés OK, build/TS OK, 0 erreur runtime.
+- **Recherche « intelligente » (intention qualitative)** : « ventilateur peu bruyant »
+  trie par bruit croissant, « frigo qui consomme peu » par conso croissante, etc.
+  - `lib/search/intent.ts` : lexique FR (silence / consommation / puissance / capacité /
+    compacité / prix / haut de gamme) → caractéristique + sens, résolu par catégorie
+    (la 1ʳᵉ spec présente). Re-tri normalisé 0–1, multi-critères, bandeau « trié par » dans l'UI.
+  - **Lecture seule des specs existantes** → scoring et scraping **non touchés** ; `/api/recommend` préservé.
+  - Testé en réel (PGlite + dev) sur les 287 produits : tri correct sur tous les cas,
+    endpoints impactés OK, build/TS OK, lint propre, 0 erreur runtime.
 - **Refactor CSV** : `scripts/import-feed.ts` utilise désormais le parseur partagé
   `lib/offers/csv.ts` (fin de la duplication `splitLine`/`parseCsv`/`toBool`).
 - **Nettoyage code mort** (validé) : suppression de `specLabel` + `SPEC_LABELS` local

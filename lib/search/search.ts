@@ -1,6 +1,13 @@
 import type { Category } from "@/app/generated/prisma/enums";
 import { CATEGORY_LABELS, modelName } from "@/app/types";
 import { CATEGORY_KEYWORDS } from "@/lib/recommendation/recommend";
+import { norm, tokenize } from "./normalize";
+import {
+  parseQualifiers,
+  stripQualifiers,
+  resolveIntentValue,
+  type IntentDef,
+} from "./intent";
 
 // ---------------------------------------------------------------------------
 // Free-text product search (in-memory, relevance-ranked).
@@ -11,26 +18,12 @@ import { CATEGORY_KEYWORDS } from "@/lib/recommendation/recommend";
 //
 // Matches, by decreasing weight: MPN ▸ brand ▸ model/name ▸ category
 // (label + keywords) ▸ description. Diacritics-insensitive (French).
+//
+// On top of text matching, a qualitative-intent layer (lib/search/intent.ts)
+// re-ranks results when the query expresses a preference ("peu bruyant",
+// "consomme peu"…), sorting by the relevant characteristic. Read-only over
+// existing spec values — the scoring engine is untouched.
 // ---------------------------------------------------------------------------
-
-/** Lower-case, strip diacritics & punctuation, collapse whitespace. */
-function norm(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/['’]/g, " ")
-    .replace(/[^a-z0-9\s-]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-/** Split a normalized string into meaningful tokens (length ≥ 2). */
-function tokenize(s: string): string[] {
-  return norm(s)
-    .split(" ")
-    .filter((t) => t.length >= 2);
-}
 
 export type MatchField =
   | "mpn"
@@ -46,6 +39,8 @@ export interface SearchableProduct {
   category: Category;
   mpn: string;
   description?: string | null;
+  price?: number | null;
+  specifications?: Array<{ key: string; value: string; unit?: string | null }>;
   productScore?: { finalScore: number } | null;
 }
 
@@ -53,6 +48,20 @@ export interface SearchHit<T> {
   product: T;
   relevance: number;
   matchedFields: MatchField[];
+  /** 0–1 fit to the detected qualitative intents (0 when none detected). */
+  intentScore: number;
+}
+
+/** A qualitative intent applied to the ranking, for UI display. */
+export interface AppliedIntent {
+  id: string;
+  label: string;
+  arrow: "↑" | "↓";
+}
+
+export interface SearchResponse<T> {
+  hits: SearchHit<T>[];
+  intents: AppliedIntent[];
 }
 
 // Inclusion floor: filters out incidental single-word description hits while
@@ -133,32 +142,92 @@ function scoreProduct<T extends SearchableProduct>(
 }
 
 /**
- * Rank `products` by textual relevance to `query`. Returns hits above the
- * inclusion floor, sorted by relevance then by final score (read-only).
+ * Score each hit 0–1 against the detected intents and attach it as
+ * `intentScore`. Each intent's target characteristic is normalized across the
+ * candidate set (missing value → 0). Returns the intents that actually had data.
+ */
+function applyIntentRanking<T extends SearchableProduct>(
+  hits: SearchHit<T>[],
+  intents: IntentDef[]
+): IntentDef[] {
+  const stats = intents.map((def) => {
+    const values: number[] = [];
+    for (const h of hits) {
+      const r = resolveIntentValue(h.product, def);
+      if (r) values.push(r.value);
+    }
+    return {
+      def,
+      min: values.length ? Math.min(...values) : 0,
+      max: values.length ? Math.max(...values) : 0,
+      hasData: values.length > 0,
+    };
+  });
+
+  const active = stats.filter((s) => s.hasData);
+
+  for (const h of hits) {
+    let sum = 0;
+    let count = 0;
+    for (const s of active) {
+      const r = resolveIntentValue(h.product, s.def);
+      let unit: number;
+      if (r == null) unit = 0; // lacks the characteristic → ranked last for it
+      else if (s.max === s.min) unit = 0.5;
+      else {
+        const t = (r.value - s.min) / (s.max - s.min); // 0..1, higher raw value
+        unit = r.dir === "max" ? t : 1 - t;
+      }
+      sum += unit;
+      count++;
+    }
+    h.intentScore = count > 0 ? sum / count : 0;
+  }
+
+  return active.map((s) => s.def);
+}
+
+/**
+ * Rank `products` by relevance to `query`. When the query expresses qualitative
+ * intents ("peu bruyant"…), results are sorted primarily by fit to those
+ * intents, with text relevance and final score as tie-breakers. Returns the
+ * applied intents alongside the hits (for UI display).
  */
 export function searchProducts<T extends SearchableProduct>(
   query: string,
   products: T[],
   limit = 30
-): SearchHit<T>[] {
-  const fullQuery = norm(query);
-  const tokens = tokenize(query);
-  if (tokens.length === 0) return [];
+): SearchResponse<T> {
+  const intents = parseQualifiers(query);
+  // Strip recognized modifiers so text relevance focuses on the product nouns.
+  const textQuery = intents.length > 0 ? stripQualifiers(query) : norm(query);
+  const fullQuery = norm(textQuery);
+  const tokens = tokenize(textQuery);
+  if (tokens.length === 0) return { hits: [], intents: [] };
 
   const hits: SearchHit<T>[] = [];
   for (const product of products) {
     const { relevance, matchedFields } = scoreProduct(product, tokens, fullQuery);
     if (relevance >= MIN_RELEVANCE) {
-      hits.push({ product, relevance, matchedFields });
+      hits.push({ product, relevance, matchedFields, intentScore: 0 });
     }
   }
 
+  const applied =
+    intents.length > 0 ? applyIntentRanking(hits, intents) : [];
+
   hits.sort((a, b) => {
+    if (applied.length > 0 && b.intentScore !== a.intentScore) {
+      return b.intentScore - a.intentScore;
+    }
     if (b.relevance !== a.relevance) return b.relevance - a.relevance;
     const sa = a.product.productScore?.finalScore ?? 0;
     const sb = b.product.productScore?.finalScore ?? 0;
     return sb - sa;
   });
 
-  return hits.slice(0, limit);
+  return {
+    hits: hits.slice(0, limit),
+    intents: applied.map((d) => ({ id: d.id, label: d.label, arrow: d.arrow })),
+  };
 }
