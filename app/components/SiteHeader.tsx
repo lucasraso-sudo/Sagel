@@ -7,7 +7,6 @@ import { Logo } from "./Logo";
 
 const SIMPLE_LINKS = [
   { label: "Les tops", href: "/tops" },
-  { label: "Comparer", href: "/compare" },
 ];
 
 function FamilyColumn({ family }: { family: CatalogFamily }) {
