@@ -19,7 +19,7 @@ export default function CategoryPage() {
   // Filters
   const [sort, setSort] = useState("score");
   const [maxPrice, setMaxPrice] = useState("");
-  const [minScore, setMinScore] = useState("");
+  const [minScore, setMinScore] = useState(""); // /100 in the UI
 
   const fetchProducts = useCallback(async () => {
     if (!category) return;
@@ -27,7 +27,8 @@ export default function CategoryPage() {
 
     const params = new URLSearchParams({ category, sort });
     if (maxPrice) params.set("maxPrice", maxPrice);
-    if (minScore) params.set("minScore", minScore);
+    // UI is /100, the API filters on the stored /20 score.
+    if (minScore) params.set("minScore", String(Number(minScore) / 5));
 
     const res = await fetch(`/api/products?${params}`);
     const data = await res.json();
@@ -49,57 +50,66 @@ export default function CategoryPage() {
 
   if (!category) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center text-gray-500">
+      <div className="max-w-4xl mx-auto px-6 py-16 text-center text-muted">
         Catégorie introuvable.
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="mb-6">
+    <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="mb-8 max-w-xl">
         <SearchBar />
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        {CATEGORY_LABELS[category]}
-      </h1>
-
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3 mb-8 items-center">
+      {/* Stats bar */}
+      <div className="flex flex-wrap items-center gap-4 mb-7">
+        <h1 className="font-serif text-2xl font-bold text-ink flex-1">
+          {CATEGORY_LABELS[category]}
+        </h1>
+        {!loading && (
+          <span className="text-[0.78rem] text-muted">
+            {products.length} produit{products.length > 1 ? "s" : ""} analysé
+            {products.length > 1 ? "s" : ""}
+          </span>
+        )}
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="border-[1.5px] border-line rounded-lg px-3 py-1.5 text-[0.82rem] bg-white text-ink cursor-pointer outline-none focus:border-brand"
         >
-          <option value="score">Meilleur score</option>
+          <option value="score">Score Sagel ↓</option>
           <option value="price">Prix croissant</option>
           <option value="name">Alphabétique</option>
         </select>
+      </div>
 
+      {/* Filters */}
+      <div className="flex flex-wrap gap-3 mb-8 items-center">
         <input
           type="number"
           placeholder="Prix max (€)"
           value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm w-36 bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="border-[1.5px] border-line rounded-full px-4 py-2 text-[0.82rem] w-36 bg-white outline-none focus:border-brand"
         />
-
         <input
           type="number"
-          placeholder="Score min (/20)"
+          placeholder="Score min (/100)"
           value={minScore}
           onChange={(e) => setMinScore(e.target.value)}
           min="0"
-          max="20"
-          step="0.5"
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm w-40 bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+          max="100"
+          step="5"
+          className="border-[1.5px] border-line rounded-full px-4 py-2 text-[0.82rem] w-40 bg-white outline-none focus:border-brand"
         />
-
         {(maxPrice || minScore) && (
           <button
-            onClick={() => { setMaxPrice(""); setMinScore(""); }}
-            className="text-sm text-gray-400 hover:text-gray-700 underline"
+            onClick={() => {
+              setMaxPrice("");
+              setMinScore("");
+            }}
+            className="text-[0.82rem] text-muted hover:text-ink underline"
           >
             Effacer filtres
           </button>
@@ -108,24 +118,23 @@ export default function CategoryPage() {
 
       {/* Grid */}
       {loading ? (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {Array.from({ length: 8 }).map((_, i) => (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="bg-white rounded-2xl border border-gray-100 h-64 animate-pulse"
+              className="bg-white rounded-2xl border border-line h-80 animate-pulse"
             />
           ))}
         </div>
       ) : products.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
-          Aucun produit trouvé.
-        </div>
+        <div className="text-center py-20 text-muted">Aucun produit trouvé.</div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {products.map((p) => (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products.map((p, i) => (
             <ProductCard
               key={p.id}
               product={p}
+              rank={sort === "score" ? i + 1 : undefined}
               onCompareToggle={toggleCompare}
               isComparing={comparing.includes(p.id)}
             />

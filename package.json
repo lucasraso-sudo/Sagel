@@ -4,12 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
+    "db:server": "npx tsx scripts/pglite-server.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "npx tsx prisma/seed.ts",
+    "db:seed:offers": "npx tsx scripts/seed-offers.ts",
+    "resolve:offers": "npx tsx scripts/resolve-offers.ts",
+    "import:feed": "npx tsx scripts/import-feed.ts",
+    "import:awin": "npx tsx scripts/import-awin.ts",
+    "refresh:prices": "npx tsx scripts/refresh-prices.ts",
     "db:studio": "prisma studio"
   },
   "dependencies": {
@@ -22,6 +28,8 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.3",
+    "@electric-sql/pglite-socket": "^0.2.5",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.43",
     "@types/pg": "^8.20.0",

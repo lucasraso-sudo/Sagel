@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
       productScore: true,
       expertScores: true,
       reviewAggregates: { include: { source: true } },
+      offers: { orderBy: { price: "asc" } },
     },
   });
 

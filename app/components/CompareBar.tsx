@@ -18,19 +18,20 @@ export function CompareBar({ selectedIds, onClear }: CompareBarProps) {
   }
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white rounded-2xl shadow-xl px-6 py-3 flex items-center gap-4">
+    <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-ink text-white rounded-full shadow-[0_12px_32px_rgba(0,0,0,0.25)] pl-6 pr-3 py-2.5 flex items-center gap-4">
       <span className="text-sm font-medium">
-        {selectedIds.length} produit{selectedIds.length > 1 ? "s" : ""} sélectionné{selectedIds.length > 1 ? "s" : ""}
+        {selectedIds.length} produit{selectedIds.length > 1 ? "s" : ""} sélectionné
+        {selectedIds.length > 1 ? "s" : ""}
       </span>
       <button
         onClick={handleCompare}
-        className="bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors"
+        className="bg-brand hover:bg-brand-light text-white text-sm font-semibold px-4 py-1.5 rounded-full transition-colors"
       >
-        Comparer
+        Comparer →
       </button>
       <button
         onClick={onClear}
-        className="text-gray-400 hover:text-white text-sm transition-colors"
+        className="text-white/60 hover:text-white text-sm transition-colors"
       >
         Effacer
       </button>

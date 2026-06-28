@@ -1,0 +1,7 @@
+aw_deep_link,merchant_product_id,merchant_name,brand_name,mpn,ean,search_price,currency,in_stock,product_name
+"https://www.awin1.com/cread.php?awinmid=2745&awinaffid=123456&ued=https%3A%2F%2Fwww.fnac.com%2Fa1234567%2FRowenta-VU5670",FNAC-5670,Fnac,Rowenta,VU5670,,84.99,EUR,1,Rowenta Turbo Silence Extreme VU5670
+"https://www.awin1.com/cread.php?awinmid=3912&awinaffid=123456&ued=https%3A%2F%2Fwww.darty.com%2Fnav%2Fachat%2Fdelonghi_pac_an97",DARTY-AN97,Darty,DeLonghi,PACAN97,,389.00,EUR,1,DeLonghi Pinguino PAC AN97
+"https://www.awin1.com/cread.php?awinmid=7012&awinaffid=123456&ued=https%3A%2F%2Fwww.boulanger.com%2Fref%2Fmidea_mppd12",BLG-MPPD12,Boulanger,Midea,MPPD-12CRN1,,329.99,EUR,0,Midea MPPD-12CRN1 Climatiseur mobile
+"https://www.awin1.com/cread.php?awinmid=2745&awinaffid=123456&ued=https%3A%2F%2Fwww.fnac.com%2Fa7654321%2FDyson-AM07",FNAC-AM07,Fnac,Dyson,AM07,,329.00,EUR,1,Dyson Cool AM07 Ventilateur Tour
+"https://www.awin1.com/cread.php?awinmid=3912&awinaffid=123456&ued=https%3A%2F%2Fwww.darty.com%2Fnav%2Fachat%2Fwhirlpool_pacf29co",DARTY-PACF29,Darty,Whirlpool,PACF29CO,,549.00,EUR,1,Whirlpool PACF29CO WiFi Climatiseur
+"https://www.awin1.com/cread.php?awinmid=2745&awinaffid=123456&ued=https%3A%2F%2Fwww.fnac.com%2Fa0000000%2FInconnu",FNAC-ZZ,Fnac,MarqueInconnue,ZZ999,,99.00,EUR,1,Produit hors catalogue

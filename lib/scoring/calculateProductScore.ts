@@ -38,8 +38,8 @@ export interface ScoreResult {
 const PLATFORM_WEIGHTS: Record<string, number> = {
   Darty: 1.5,
   Fnac: 1.4,
-  Boulanger: 1.3,
-  Amazon: 1.1,
+  Cdiscount: 1.2,
+  "Rue du Commerce": 1.15,
 };
 
 function getPlatformWeight(name: string): number {
@@ -120,6 +120,100 @@ const SPEC_TARGETS: Record<
     { key: "cooling_power", ideal: 12000, unit: "BTU", higherIsBetter: true },
     { key: "noise_level", ideal: 52, unit: "dB", higherIsBetter: false },
     { key: "energy_rating", ideal: 5, unit: "stars", higherIsBetter: true },
+  ],
+  AIR_PURIFIER: [
+    { key: "cadr", ideal: 400, unit: "m3/h", higherIsBetter: true },
+    { key: "coverage_area", ideal: 60, unit: "m2", higherIsBetter: true },
+    { key: "noise_level", ideal: 25, unit: "dB", higherIsBetter: false },
+  ],
+  DEHUMIDIFIER: [
+    { key: "extraction", ideal: 24, unit: "L/jour", higherIsBetter: true },
+    { key: "tank_size", ideal: 5, unit: "L", higherIsBetter: true },
+    { key: "noise_level", ideal: 40, unit: "dB", higherIsBetter: false },
+  ],
+  HEATER: [
+    { key: "heating_power", ideal: 2000, unit: "W", higherIsBetter: true },
+    { key: "coverage_area", ideal: 25, unit: "m2", higherIsBetter: true },
+    { key: "noise_level", ideal: 30, unit: "dB", higherIsBetter: false },
+  ],
+  RADIATOR: [
+    { key: "heating_power", ideal: 2000, unit: "W", higherIsBetter: true },
+    { key: "coverage_area", ideal: 25, unit: "m2", higherIsBetter: true },
+    { key: "noise_level", ideal: 20, unit: "dB", higherIsBetter: false },
+  ],
+  HUMIDIFIER: [
+    { key: "tank_size", ideal: 6, unit: "L", higherIsBetter: true },
+    { key: "coverage_area", ideal: 50, unit: "m2", higherIsBetter: true },
+    { key: "noise_level", ideal: 25, unit: "dB", higherIsBetter: false },
+  ],
+  THERMOSTAT: [
+    { key: "savings", ideal: 35, unit: "%", higherIsBetter: true },
+  ],
+  WASHING_MACHINE: [
+    { key: "capacity", ideal: 9, unit: "kg", higherIsBetter: true },
+    { key: "spin_speed", ideal: 1400, unit: "tr/min", higherIsBetter: true },
+    { key: "noise_level", ideal: 50, unit: "dB", higherIsBetter: false },
+  ],
+  DISHWASHER: [
+    { key: "place_settings", ideal: 14, unit: "couverts", higherIsBetter: true },
+    { key: "noise_level", ideal: 42, unit: "dB", higherIsBetter: false },
+    { key: "water_use", ideal: 9, unit: "L", higherIsBetter: false },
+  ],
+  FRIDGE: [
+    { key: "volume", ideal: 360, unit: "L", higherIsBetter: true },
+    { key: "noise_level", ideal: 38, unit: "dB", higherIsBetter: false },
+    { key: "consumption", ideal: 150, unit: "kWh/an", higherIsBetter: false },
+  ],
+  TUMBLE_DRYER: [
+    { key: "capacity", ideal: 9, unit: "kg", higherIsBetter: true },
+    { key: "noise_level", ideal: 64, unit: "dB", higherIsBetter: false },
+    { key: "consumption", ideal: 200, unit: "kWh/an", higherIsBetter: false },
+  ],
+  FREEZER: [
+    { key: "volume", ideal: 250, unit: "L", higherIsBetter: true },
+    { key: "noise_level", ideal: 38, unit: "dB", higherIsBetter: false },
+    { key: "consumption", ideal: 150, unit: "kWh/an", higherIsBetter: false },
+  ],
+  OVEN: [
+    { key: "volume", ideal: 71, unit: "L", higherIsBetter: true },
+    { key: "consumption", ideal: 0.8, unit: "kWh", higherIsBetter: false },
+  ],
+  COOKTOP: [
+    { key: "zones", ideal: 4, unit: "foyers", higherIsBetter: true },
+    { key: "max_power", ideal: 7400, unit: "W", higherIsBetter: true },
+  ],
+  HOOD: [
+    { key: "extraction_rate", ideal: 600, unit: "m3/h", higherIsBetter: true },
+    { key: "noise_level", ideal: 50, unit: "dB", higherIsBetter: false },
+  ],
+  WINE_CELLAR: [
+    { key: "bottles", ideal: 40, unit: "bouteilles", higherIsBetter: true },
+    { key: "noise_level", ideal: 38, unit: "dB", higherIsBetter: false },
+    { key: "consumption", ideal: 150, unit: "kWh/an", higherIsBetter: false },
+  ],
+  COFFEE_MACHINE: [
+    { key: "pressure", ideal: 19, unit: "bars", higherIsBetter: true },
+    { key: "tank_size", ideal: 1.8, unit: "L", higherIsBetter: true },
+  ],
+  AIR_FRYER: [
+    { key: "bowl_capacity", ideal: 6, unit: "L", higherIsBetter: true },
+    { key: "heating_power", ideal: 1700, unit: "W", higherIsBetter: true },
+  ],
+  COOKING_ROBOT: [
+    { key: "bowl_capacity", ideal: 3, unit: "L", higherIsBetter: true },
+    { key: "max_power", ideal: 1500, unit: "W", higherIsBetter: true },
+  ],
+  KETTLE: [
+    { key: "tank_size", ideal: 1.7, unit: "L", higherIsBetter: true },
+    { key: "heating_power", ideal: 3000, unit: "W", higherIsBetter: true },
+  ],
+  TOASTER: [
+    { key: "slots", ideal: 4, unit: "fentes", higherIsBetter: true },
+    { key: "heating_power", ideal: 1500, unit: "W", higherIsBetter: true },
+  ],
+  BLENDER: [
+    { key: "max_power", ideal: 1500, unit: "W", higherIsBetter: true },
+    { key: "bowl_capacity", ideal: 2, unit: "L", higherIsBetter: true },
   ],
 };
 

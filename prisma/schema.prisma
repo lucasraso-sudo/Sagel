@@ -11,27 +11,76 @@ enum Category {
   FAN
   AIR_COOLER
   MOBILE_AC
+  AIR_PURIFIER
+  DEHUMIDIFIER
+  HEATER
+  RADIATOR
+  HUMIDIFIER
+  THERMOSTAT
+  WASHING_MACHINE
+  DISHWASHER
+  FRIDGE
+  TUMBLE_DRYER
+  FREEZER
+  OVEN
+  COOKTOP
+  HOOD
+  WINE_CELLAR
+  COFFEE_MACHINE
+  AIR_FRYER
+  COOKING_ROBOT
+  KETTLE
+  TOASTER
+  BLENDER
 }
 
 model Product {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   brand       String
   category    Category
   description String?
   image       String?
-  ean         String?   @unique
+  ean         String?  @unique // EAN-13 / GTIN — master cross-merchant key (null until sourced)
+  mpn         String // manufacturer part number / référence constructeur
   price       Float?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   specifications   ProductSpecification[]
   reviewAggregates ProductReviewAggregate[]
   expertScores     ExpertScore[]
   productScore     ProductScore?
+  offers           Offer[]
 
+  @@unique([brand, mpn]) // (brand, MPN) uniquely identifies a model when EAN is absent
   @@index([category])
   @@index([brand])
+}
+
+model Offer {
+  id          String   @id @default(cuid())
+  productId   String
+  merchant    String // "Amazon" | "Darty" | "Fnac" | "Boulanger"
+  merchantSku String? // ASIN / merchant product id, once the exact listing is resolved
+  url         String // canonical product URL (or precise EAN/MPN search until resolved)
+  // True when `url` is already an affiliate-tracked deeplink (e.g. Awin aw_deep_link)
+  // → /api/go redirects to it as-is instead of re-wrapping.
+  isAffiliateUrl Boolean @default(false)
+  price       Float
+  currency    String   @default("EUR")
+  inStock     Boolean  @default(true)
+  lastUpdated DateTime @default(now())
+
+  // Outbound click tracking (revenue attribution).
+  clickCount    Int       @default(0)
+  lastClickedAt DateTime?
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, merchant])
+  @@index([productId])
+  @@index([productId, price])
 }
 
 model ProductSpecification {

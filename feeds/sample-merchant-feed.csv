@@ -1,0 +1,7 @@
+ean,brand,mpn,merchant,price,currency,in_stock,url,sku
+,Dyson,AM07,Amazon,329.99,EUR,1,https://www.amazon.fr/dp/B0SAMPLE01,B0SAMPLE01
+,Rowenta,VU5670,Fnac,84.99,EUR,1,https://www.fnac.com/a1234567/sample,FNAC-SAMPLE-01
+,Meaco,MEACOFAN1056,Amazon,114.99,EUR,1,https://www.amazon.fr/dp/B0SAMPLE02,B0SAMPLE02
+,DeLonghi,PACAN97,Darty,389.99,EUR,1,https://www.darty.com/nav/achat/sample,DARTY-SAMPLE-01
+,Midea,MPPD-12CRN1,Boulanger,319.99,EUR,0,https://www.boulanger.com/ref/sample,BLG-SAMPLE-01
+,Dyson,AM99,Amazon,199.99,EUR,1,https://www.amazon.fr/dp/B0NOEXIST,B0NOEXIST

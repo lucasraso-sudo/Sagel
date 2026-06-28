@@ -2,7 +2,32 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db/client";
 import type { Category } from "@/app/generated/prisma/enums";
 
-const VALID_CATEGORIES: Category[] = ["FAN", "AIR_COOLER", "MOBILE_AC"];
+const VALID_CATEGORIES: Category[] = [
+  "FAN",
+  "AIR_COOLER",
+  "MOBILE_AC",
+  "AIR_PURIFIER",
+  "DEHUMIDIFIER",
+  "HEATER",
+  "RADIATOR",
+  "HUMIDIFIER",
+  "THERMOSTAT",
+  "WASHING_MACHINE",
+  "DISHWASHER",
+  "FRIDGE",
+  "TUMBLE_DRYER",
+  "FREEZER",
+  "OVEN",
+  "COOKTOP",
+  "HOOD",
+  "WINE_CELLAR",
+  "COFFEE_MACHINE",
+  "AIR_FRYER",
+  "COOKING_ROBOT",
+  "KETTLE",
+  "TOASTER",
+  "BLENDER",
+];
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -27,6 +52,7 @@ export async function GET(request: NextRequest) {
       specifications: true,
       productScore: true,
       reviewAggregates: { include: { source: true } },
+      offers: { orderBy: { price: "asc" } },
     },
     orderBy:
       sort === "price"

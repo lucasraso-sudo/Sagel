@@ -17,23 +17,6 @@ interface ProductContext {
 }
 
 // ---------------------------------------------------------------------------
-// Human-readable spec labels
-// ---------------------------------------------------------------------------
-
-const SPEC_LABELS: Record<string, string> = {
-  noise_level: "niveau sonore",
-  airflow: "débit d'air",
-  power: "consommation",
-  cooling_power: "puissance de refroidissement",
-  tank_size: "capacité du réservoir",
-  energy_rating: "efficacité énergétique",
-};
-
-function specLabel(key: string): string {
-  return SPEC_LABELS[key] ?? key.replace(/_/g, " ");
-}
-
-// ---------------------------------------------------------------------------
 // Prose generator — data-driven, no generic filler
 // ---------------------------------------------------------------------------
 

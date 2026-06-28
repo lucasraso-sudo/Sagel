@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SearchBar } from "@/app/components/SearchBar";
+import { CategoryExplorer } from "@/app/components/CategoryExplorer";
 
 const EXAMPLE_QUERIES = [
   "ventilateur silencieux pour chambre",
@@ -8,24 +9,21 @@ const EXAMPLE_QUERIES = [
   "meilleur ventilateur de table",
 ];
 
-const CATEGORIES = [
+const SCORE_AXES = [
   {
-    slug: "ventilateurs",
-    label: "Ventilateurs",
-    emoji: "🌀",
-    desc: "Brasseurs d'air, colonnes, tours et ventilateurs de table",
+    icon: "⭐",
+    label: "Avis utilisateurs",
+    desc: "Agrégation des avis plateformes (Darty, Fnac, Amazon…) pondérés par volume et fiabilité.",
   },
   {
-    slug: "rafraichisseurs-air",
-    label: "Rafraîchisseurs d'air",
-    emoji: "💧",
-    desc: "Rafraîchisseurs évaporatifs, brumisateurs, 3-en-1",
+    icon: "🔬",
+    label: "Tests experts",
+    desc: "Tests indépendants UFC Que Choisir, Which?, Consumer Reports.",
   },
   {
-    slug: "climatiseurs-mobiles",
-    label: "Climatiseurs mobiles",
-    emoji: "❄️",
-    desc: "Climatiseurs monobloc et split mobile, connectés",
+    icon: "⚙️",
+    label: "Score technique",
+    desc: "Analyse des specs clés : performance, consommation et confort d'usage.",
   },
 ];
 
@@ -33,88 +31,64 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-b from-blue-50 to-gray-50 pt-16 pb-20 px-4">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
-            Trouvez le meilleur produit <br />
-            <span className="text-blue-600">en quelques secondes</span>
-          </h1>
-          <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            Scores transparents, données réelles. Sans affiliation, sans biais.
-          </p>
-          <SearchBar large />
+      <section className="px-6 pt-10 pb-14 text-center max-w-3xl mx-auto">
+        <span className="inline-block bg-gold text-ink text-[0.72rem] font-semibold uppercase tracking-[0.08em] px-3.5 py-1.5 rounded-full mb-6">
+          ✦ Le comparateur qualité
+        </span>
+        <h1 className="font-serif text-[clamp(2.2rem,5vw,3.4rem)] font-bold leading-[1.15] tracking-[-0.03em] text-ink mb-4">
+          Achetez mieux,
+          <br />
+          pas <em className="not-italic text-brand">plus cher</em>.
+        </h1>
+        <p className="text-base text-muted leading-relaxed max-w-lg mx-auto mb-9">
+          Sagel analyse chaque produit — avis réels, tests experts et
+          performance technique — pour vous donner un score unique et honnête.
+        </p>
 
-          <div className="flex flex-wrap gap-2 justify-center pt-2">
-            {EXAMPLE_QUERIES.map((q) => (
-              <Link
-                key={q}
-                href={`/search?q=${encodeURIComponent(q)}`}
-                className="text-sm bg-white border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 px-3 py-1.5 rounded-full transition-colors shadow-sm"
-              >
-                {q}
-              </Link>
-            ))}
-          </div>
+        <SearchBar large />
+
+        <div className="flex flex-wrap gap-2 justify-center pt-5">
+          {EXAMPLE_QUERIES.map((q) => (
+            <Link
+              key={q}
+              href={`/search?q=${encodeURIComponent(q)}`}
+              className="text-[0.8rem] bg-white border-[1.5px] border-line text-muted hover:text-brand hover:border-brand px-3.5 py-1.5 rounded-full transition-colors"
+            >
+              {q}
+            </Link>
+          ))}
         </div>
       </section>
 
       {/* Score explainer */}
-      <section className="max-w-4xl mx-auto px-4 py-14">
-        <h2 className="text-xl font-bold text-gray-800 mb-8 text-center">
-          Comment fonctionne le score ?
+      <section className="max-w-4xl mx-auto px-6 py-12">
+        <h2 className="font-serif text-2xl font-bold text-ink mb-8 text-center">
+          Comment fonctionne le score&nbsp;?
         </h2>
         <div className="grid sm:grid-cols-3 gap-6">
-          {[
-            {
-              icon: "⭐",
-              label: "Avis utilisateurs",
-              pct: "55%",
-              desc: "Agrégation des avis plateformes (Darty, Fnac, Amazon…) pondérés par volume et fiabilité.",
-            },
-            {
-              icon: "🔬",
-              label: "Score expert",
-              pct: "20%",
-              desc: "Tests indépendants UFC Que Choisir, Which?, Consumer Reports.",
-            },
-            {
-              icon: "⚙️",
-              label: "Score technique",
-              pct: "25%",
-              desc: "Analyse des specs clés : bruit, débit d'air, consommation selon la catégorie.",
-            },
-          ].map((item) => (
+          {SCORE_AXES.map((item) => (
             <div
               key={item.label}
-              className="bg-white rounded-2xl border border-gray-100 p-5 text-center shadow-sm"
+              className="bg-white rounded-2xl border border-line p-6 text-center"
             >
-              <div className="text-3xl mb-3">{item.icon}</div>
-              <div className="font-bold text-2xl text-blue-600 mb-1">{item.pct}</div>
-              <div className="font-semibold text-gray-800 mb-2">{item.label}</div>
-              <p className="text-sm text-gray-500">{item.desc}</p>
+              <div className="text-[2.4rem] mb-3">{item.icon}</div>
+              <div className="font-serif font-semibold text-[1.15rem] text-ink mb-2">
+                {item.label}
+              </div>
+              <p className="text-[0.82rem] text-muted leading-relaxed">
+                {item.desc}
+              </p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Categories */}
-      <section className="max-w-4xl mx-auto px-4 pb-16">
-        <h2 className="text-xl font-bold text-gray-800 mb-6">Catégories</h2>
-        <div className="grid sm:grid-cols-3 gap-4">
-          {CATEGORIES.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/category/${cat.slug}`}
-              className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:border-blue-100 transition-all group"
-            >
-              <div className="text-3xl mb-3">{cat.emoji}</div>
-              <h3 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
-                {cat.label}
-              </h3>
-              <p className="text-sm text-gray-500 mt-1">{cat.desc}</p>
-            </Link>
-          ))}
-        </div>
+      <section className="max-w-4xl mx-auto px-6 pb-16">
+        <h2 className="font-serif text-2xl font-bold text-ink mb-6">
+          Explorez par catégorie
+        </h2>
+        <CategoryExplorer />
       </section>
     </div>
   );

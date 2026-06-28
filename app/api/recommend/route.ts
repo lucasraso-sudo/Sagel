@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
     include: {
       specifications: true,
       productScore: true,
+      offers: { orderBy: { price: "asc" } },
     },
   });
 
