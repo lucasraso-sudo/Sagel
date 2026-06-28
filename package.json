@@ -31,7 +31,7 @@
     "@electric-sql/pglite": "^0.5.3",
     "@electric-sql/pglite-socket": "^0.2.5",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20.19.43",
+    "@types/node": "^26.0.1",
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
