@@ -7,7 +7,8 @@ import { ScoreRing, ScoreBar, to100 } from "@/app/components/ScoreBadge";
 import { EnergyBadge } from "@/app/components/EnergyBadge";
 import type { Product, Explanation } from "@/app/types";
 import { modelName } from "@/app/types";
-import { CATEGORY_EMOJI, SPEC_LABELS } from "@/app/constants";
+import { SPEC_LABELS } from "@/app/constants";
+import { CategoryVisual } from "@/app/components/CategoryVisual";
 import { PRICES_LIVE } from "@/app/config";
 
 interface CompareItem {
@@ -107,9 +108,11 @@ function CompareContent() {
                 </span>
               )}
               <div className="text-center">
-                <div className="w-16 h-16 bg-cream rounded-xl flex items-center justify-center text-4xl mx-auto mb-2">
-                  {CATEGORY_EMOJI[product.category] ?? "📦"}
-                </div>
+                <CategoryVisual
+                  category={product.category}
+                  className="w-16 h-16 rounded-xl mx-auto mb-2"
+                  emojiClass="text-4xl"
+                />
                 <p className="text-[0.72rem] text-muted uppercase tracking-[0.08em]">
                   {product.brand}
                 </p>

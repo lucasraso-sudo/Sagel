@@ -6,10 +6,11 @@ import Link from "next/link";
 import { ScoreRing, ScoreBar } from "@/app/components/ScoreBadge";
 import { InfoTooltip } from "@/app/components/InfoTooltip";
 import { EnergyBadge } from "@/app/components/EnergyBadge";
+import { CategoryVisual } from "@/app/components/CategoryVisual";
 import type { Product, Explanation } from "@/app/types";
 import { CATEGORY_LABELS, CATEGORY_SLUGS_REVERSE, modelName } from "@/app/types";
 import { PRICES_LIVE } from "@/app/config";
-import { CATEGORY_EMOJI, MERCHANT_EMOJI, SPEC_LABELS } from "@/app/constants";
+import { MERCHANT_EMOJI, SPEC_LABELS } from "@/app/constants";
 
 interface ProductDetailData {
   product: Product;
@@ -167,7 +168,6 @@ export default function ProductPage() {
 
   const { product, explanation } = data;
   const score = product.productScore;
-  const emoji = CATEGORY_EMOJI[product.category] ?? "📦";
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-8 space-y-6">
@@ -191,9 +191,11 @@ export default function ProductPage() {
 
       {/* Header */}
       <div className="bg-white rounded-2xl border border-line p-6 flex flex-col sm:flex-row gap-6 items-start">
-        <div className="w-full sm:w-40 h-40 bg-cream rounded-xl flex items-center justify-center text-6xl flex-shrink-0">
-          {emoji}
-        </div>
+        <CategoryVisual
+          category={product.category}
+          className="w-full sm:w-40 h-40 rounded-xl flex-shrink-0"
+          emojiClass="text-6xl"
+        />
 
         <div className="flex-1">
           <p className="text-[0.72rem] text-muted uppercase tracking-[0.08em] font-semibold">

@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ScoreRing, SubScoreRow } from "./ScoreBadge";
+import { CategoryVisual } from "./CategoryVisual";
 import type { Product } from "@/app/types";
 import { bestPrice, modelName } from "@/app/types";
 import { PRICES_LIVE } from "@/app/config";
-import { CATEGORY_EMOJI } from "@/app/constants";
 
 interface ProductCardProps {
   product: Product;
@@ -51,7 +51,6 @@ export function ProductCard({
 }: ProductCardProps) {
   const router = useRouter();
   const score = product.productScore;
-  const emoji = CATEGORY_EMOJI[product.category] ?? "📦";
   const bp = bestPrice(product);
 
   return (
@@ -64,9 +63,11 @@ export function ProductCard({
       <RankBadge rank={rank} />
 
       {/* Image */}
-      <div className="h-[140px] bg-cream flex items-center justify-center text-[3.5rem] select-none">
-        {emoji}
-      </div>
+      <CategoryVisual
+        category={product.category}
+        className="h-[140px]"
+        emojiClass="text-[3.5rem]"
+      />
 
       <div className="p-4">
         <p className="text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-muted">
