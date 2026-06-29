@@ -244,64 +244,67 @@ export default function ProductPage() {
           </div>
 
           <div className="space-y-2.5">
-            {product.offers.map((offer, i) => {
-              const isBest = i === 0 && offer.inStock; // offers come sorted by price asc
-              return (
-                <div
-                  key={offer.id}
-                  className={`flex items-center gap-4 p-3.5 rounded-xl border ${
-                    isBest ? "border-brand bg-brand/5" : "border-line"
-                  }`}
-                >
-                  <span className="text-2xl">
-                    {MERCHANT_EMOJI[offer.merchant] ?? "🛒"}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-ink">
-                        {offer.merchant}
-                      </span>
-                      {isBest && (
-                        <span className="text-[0.62rem] font-semibold uppercase tracking-wide text-white bg-brand px-2 py-0.5 rounded-full">
-                          Meilleur prix
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-[0.72rem] text-muted">
-                      {!offer.inStock
-                        ? "Indisponible"
-                        : PRICES_LIVE
-                          ? formatUpdated(offer.lastUpdated)
-                          : "Prix indicatif"}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p
-                      className={`text-xl font-bold leading-tight ${
-                        offer.inStock ? "text-ink" : "text-muted line-through"
-                      }`}
-                    >
-                      {PRICES_LIVE ? "" : "≈ "}
-                      {offer.price.toLocaleString("fr-FR")} €
-                    </p>
-                  </div>
-                  {offer.inStock ? (
-                    <a
-                      href={`/api/go/${offer.id}`}
-                      target="_blank"
-                      rel="sponsored nofollow noopener noreferrer"
-                      className="bg-brand hover:bg-brand-light text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors whitespace-nowrap"
-                    >
-                      Voir l&apos;offre →
-                    </a>
-                  ) : (
-                    <span className="bg-cream text-muted text-sm font-semibold px-4 py-2.5 rounded-lg whitespace-nowrap cursor-default">
-                      Épuisé
+            {/* Sort: active offers first, then inactive (grayed) */}
+            {[...product.offers]
+              .sort((a, b) => (b.inStock ? 1 : 0) - (a.inStock ? 1 : 0))
+              .map((offer, i) => {
+                const isBest = i === 0 && offer.inStock;
+                const isInactive = !offer.inStock;
+                return (
+                  <div
+                    key={offer.id}
+                    className={`flex items-center gap-4 p-3.5 rounded-xl border transition-opacity ${
+                      isInactive
+                        ? "border-line opacity-40"
+                        : isBest
+                          ? "border-brand bg-brand/5"
+                          : "border-line"
+                    }`}
+                  >
+                    <span className={`text-2xl ${isInactive ? "grayscale" : ""}`}>
+                      {MERCHANT_EMOJI[offer.merchant] ?? "🛒"}
                     </span>
-                  )}
-                </div>
-              );
-            })}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={`font-semibold ${isInactive ? "text-muted" : "text-ink"}`}>
+                          {offer.merchant}
+                        </span>
+                        {isBest && (
+                          <span className="text-[0.62rem] font-semibold uppercase tracking-wide text-white bg-brand px-2 py-0.5 rounded-full">
+                            Meilleur prix
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[0.72rem] text-muted">
+                        {isInactive
+                          ? "Partenariat en cours"
+                          : PRICES_LIVE
+                            ? formatUpdated(offer.lastUpdated)
+                            : "Prix indicatif"}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-xl font-bold leading-tight ${isInactive ? "text-muted" : "text-ink"}`}>
+                        {isInactive ? "—" : `${PRICES_LIVE ? "" : "≈ "}${offer.price.toLocaleString("fr-FR")} €`}
+                      </p>
+                    </div>
+                    {isInactive ? (
+                      <span className="bg-cream text-muted/60 text-sm font-semibold px-4 py-2.5 rounded-lg whitespace-nowrap cursor-default">
+                        Bientôt
+                      </span>
+                    ) : (
+                      <a
+                        href={`/api/go/${offer.id}`}
+                        target="_blank"
+                        rel="sponsored nofollow noopener noreferrer"
+                        className="bg-brand hover:bg-brand-light text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors whitespace-nowrap"
+                      >
+                        Voir l&apos;offre →
+                      </a>
+                    )}
+                  </div>
+                );
+              })}
           </div>
 
           <p className="text-[0.7rem] text-muted mt-4 leading-relaxed">

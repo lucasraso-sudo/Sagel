@@ -32,6 +32,7 @@ export const CATEGORY_EMOJI: Record<string, string> = {
 
 /** Emoji per merchant (fallback "🛒" applied at call sites). */
 export const MERCHANT_EMOJI: Record<string, string> = {
+  Amazon: "📦",
   Darty: "🔵",
   Fnac: "🟡",
   Cdiscount: "🟣",

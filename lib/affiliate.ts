@@ -13,6 +13,7 @@ type AffiliateScheme =
   | { kind: "deeplink"; template?: string }; // template must contain {URL}
 
 const AFFILIATE_CONFIG: Record<string, AffiliateScheme> = {
+  Amazon: { kind: "param", param: "tag", tag: process.env.AMAZON_AFFILIATE_TAG },
   Fnac: { kind: "deeplink", template: process.env.FNAC_AFFILIATE_DEEPLINK },
   Darty: { kind: "deeplink", template: process.env.DARTY_AFFILIATE_DEEPLINK },
   Cdiscount: {
@@ -23,8 +24,6 @@ const AFFILIATE_CONFIG: Record<string, AffiliateScheme> = {
     kind: "deeplink",
     template: process.env.RUEDUCOMMERCE_AFFILIATE_DEEPLINK,
   },
-  // Amazon (PA-API) — re-add when affiliate access is granted:
-  // Amazon: { kind: "param", param: "tag", tag: process.env.AMAZON_AFFILIATE_TAG },
 };
 
 /** Returns the click-through URL for an offer, affiliate-wrapped if configured. */
